@@ -1,15 +1,13 @@
-# Jitter og JavaScript
-
-Animation af en Jitter-json fil via JavaScript. Virker det?
+# Lottie animationer og JavaScript
 
 ----
 
 ## Ideer fra Claude Haiku
-  Denne tutorial er lavet med lidt hjælp fra Claude AI på DuckDuckGo. Claude er ikke så god til dansk, og den blander de skandinaviske sprog sammen ...
+  Denne tutorial er lavet med lidt hjælp fra Claude AI på DuckDuckGo.
 
 ### Eksport fra Jitter/Figma
 
-Når du eksporterer din JSON må der ikke være mellemrum til filnavnet. Danske specialtegn bør også undgås. 
+Når du eksporterer din JSON fra Figma må der ikke være mellemrum til filnavnet. Danske specialtegn bør også undgås. 
 
 Jeg måtte omdøbe fra: `Jitter Frame 1.json` til `jitterframe.json`. Så virkede koden.
 
@@ -29,7 +27,7 @@ Et passende sted i `<body>` skal der være en HTML-container til animationen:
 <div id="jitter-container"></div>
 ~~~~
 
-
+Hvordan gøres dette praktisk i WordPress?
 
 ### JavaScript
 
@@ -97,6 +95,6 @@ Hvis du har flere animationer, så giv dem forskellige navne. På den måde kan 
 ## Eksemplerne
 
 * lottieSemantisk.html: så enkel som muligt; men med en mere semantisk korrekt markup. Bemærk, at renderer kan være canvas eller svg.
-* jitterAnimation.html: her med en lottie, som er skabt og eksporteret som JSON i Jitter.
-* lottieLoop.html: eksempel på et loop, der genbruger animationen.
-* sneFlokkeCanvasLoop.html: viser, hvordan et canvas-element kan indeholde animationsstumper. Lotties kan renderes til et <canvas> - og det er det/de elementer man igen kan animere med lidt opfindsomhed (se lottieLoop.html)
+* jitterAnimation.html: her med en lottie, som er skabt og eksporteret som JSON i Jitter. Knapper starter og stopper animationen. Lyd startes og stoppes med vanlige JavaScript greb.
+* lottieLoop.html: eksempel på et loop, der genbruger animationen og smækker dem ind overalt.
+* sneFlokkeCanvasLoop.html: viser, hvordan et canvas-element kan indeholde animationsstumper. 
