@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Lottie Animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+</head>
+<body>
+    <!-- Helt enkel model med semantisk markup -->
+
+    <!-- Claudes ide til semantisk markup i HTML -->
+    <!-- Inline styling, helt ærligt, det kan gøres bedre. Hvordan? -->
+    <figure id="lottie-container" style="width: 400px; height: 400px; margin: 0;"></figure>
+
+    <script>
+        /**
+         * renderer: canvas
+         * Giver bedre performance end
+         * renderer:svg
+         * især ved komplekse animationer
+         * **/
+        lottie.loadAnimation({
+        container: document.getElementById('lottie-container'),
+        renderer: 'canvas',
+        loop: true,
+        autoplay: true,
+        path: './billeder/jitterframe.json'
+        });
+    </script>
+</body>
+</html>
