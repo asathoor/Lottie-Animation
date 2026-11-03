@@ -1,0 +1,128 @@
+<!-- ===== Tekstet lydafspiller – indsæt i blokken "Tilpasset HTML" ===== -->
+<div class="tl-afspiller" data-vtt="">
+  <audio controls preload="metadata" src="https://thoth.dk/wp-content/uploads/2026/11/slideTelecaster.mp3"></audio>
+  <div class="tl-tekst" aria-live="polite"></div>
+  <ul class="tl-liste"></ul>
+
+  <!-- Teksterne i WebVTT-format. Bruges hvis data-vtt ovenfor er tom. -->
+  <script type="text/vtt" class="tl-vtt">
+WEBVTT
+
+00:00:00.000 --> 00:00:03.000
+Hej og velkommen til denne optagelse.
+
+00:00:03.000 --> 00:00:07.000
+Teksterne her vises synkront med lyden.
+
+00:00:07.000 --> 00:00:11.000
+Klik på en linje nedenfor for at springe dertil.
+  </script>
+</div>
+
+<style>
+  .tl-afspiller { margin: 1.5em 0; }
+  .tl-afspiller audio { width: 100%; display: block; }
+  .tl-afspiller .tl-tekst {
+    min-height: 3.5em;
+    margin: .75em 0;
+    padding: .75em 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #1d2733;
+    color: #fff6c9;
+    font-size: 1.2em;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+  .tl-afspiller ul.tl-liste { list-style: none; margin: 0; padding: 0; }
+  .tl-afspiller ul.tl-liste li { margin: 0; padding: 0; }
+  .tl-afspiller ul.tl-liste li button {
+    all: unset;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: .4em .6em;
+    border-radius: 6px;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+  }
+  .tl-afspiller ul.tl-liste li button:hover,
+  .tl-afspiller ul.tl-liste li button:focus-visible { outline: 2px solid currentColor; }
+  .tl-afspiller ul.tl-liste li.tl-aktiv button { background: rgba(127, 127, 127, .18); }
+  .tl-afspiller .tl-tid { opacity: .65; margin-right: .6em; font-variant-numeric: tabular-nums; }
+</style>
+
+<script>
+(function () {
+  // Kører for hver afspiller på siden, så blokken kan bruges flere gange
+  document.querySelectorAll('.tl-afspiller:not([data-klar])').forEach(async function (boks) {
+    boks.setAttribute('data-klar', '1');
+
+    var lyd = boks.querySelector('audio');
+    var tekstfelt = boks.querySelector('.tl-tekst');
+    var liste = boks.querySelector('.tl-liste');
+
+    // Hent VTT: enten fra en URL (data-vtt) eller fra <script type="text/vtt">
+    var vtt;
+    if (boks.dataset.vtt) {
+      try {
+        vtt = await (await fetch(boks.dataset.vtt)).text();
+      } catch (fejl) {
+        tekstfelt.textContent = 'Tekstfilen kunne ikke hentes.';
+        return;
+      }
+    } else {
+      vtt = boks.querySelector('.tl-vtt').textContent;
+    }
+    // Fjern indrykning, så WordPress-formatering ikke ødelægger formatet
+    vtt = vtt.split('\n').map(function (l) { return l.trim(); }).join('\n').trim();
+
+    var track = document.createElement('track');
+    track.kind = 'captions';
+    track.srclang = 'da';
+    track.label = 'Dansk';
+    track.default = true;
+    track.src = URL.createObjectURL(new Blob([vtt], { type: 'text/vtt' }));
+    lyd.appendChild(track);
+    track.track.mode = 'hidden'; // <audio> viser ikke selv tekster
+
+    track.addEventListener('load', function () {
+      Array.prototype.forEach.call(track.track.cues, function (cue) {
+        var li = document.createElement('li');
+        li.dataset.start = cue.startTime;
+        var knap = document.createElement('button');
+        knap.type = 'button';
+        var tid = document.createElement('span');
+        tid.className = 'tl-tid';
+        tid.textContent = formaterTid(cue.startTime);
+        knap.appendChild(tid);
+        knap.appendChild(document.createTextNode(cue.text));
+        knap.addEventListener('click', function () {
+          lyd.currentTime = cue.startTime;
+          lyd.play();
+        });
+        li.appendChild(knap);
+        liste.appendChild(li);
+      });
+    });
+
+    track.track.addEventListener('cuechange', function () {
+      var aktiv = track.track.activeCues[0];
+      tekstfelt.textContent = aktiv ? aktiv.text : '';
+      liste.querySelectorAll('li').forEach(function (li) {
+        li.classList.toggle('tl-aktiv', !!aktiv && Number(li.dataset.start) === aktiv.startTime);
+      });
+    });
+  });
+
+  function formaterTid(sek) {
+    var m = Math.floor(sek / 60);
+    var s = String(Math.floor(sek % 60)).padStart(2, '0');
+    return m + ':' + s;
+  }
+})();
+</script>
+<!-- ===== Slut på tekstet lydafspiller ===== -->
